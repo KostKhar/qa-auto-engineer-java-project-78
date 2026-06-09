@@ -2,48 +2,41 @@ package hexlet.code.schemas;
 
 public class StringSchema {
 
-    private boolean required = true;
+    private boolean required = false;
     private Integer minLength = null;
     private String contains;
 
 
-    // не позволяет использовать null или пустую строку в качестве значения
     public StringSchema required() {
-       required = true;
-       return this;
+        required = true;
+        return this;
     }
 
-    //минимальной длины для строки
-    public StringSchema minLength(int length) {
+    public StringSchema minLength(Integer length) {
         minLength = length;
         return this;
     }
 
-    //Строка должна содержать определённую подстроку
     public StringSchema contains(String substring) {
         contains = substring;
         return this;
     }
 
     public boolean isValid(String value) {
-        if(required && (value != null && value.isEmpty())) {
-            return false;
-        }
-
-        // Если значение null или пустое, и required не задан - пропускаем
-        if (value == null || value.isEmpty()) {
+        if (!required && (value == null || value.isEmpty())) {
             return true;
         }
 
-        // Проверка minLength
-        if (minLength != null && value.length() <= minLength) {
+        if (required && (value == null || value.isEmpty())) {
             return false;
         }
 
-        // Проверка contains
+        if (minLength != null && value.length() < minLength) {
+            return false;
+        }
+
         return contains == null || value.contains(contains);
     }
-
 
 
 }

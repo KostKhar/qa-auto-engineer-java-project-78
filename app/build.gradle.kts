@@ -17,8 +17,8 @@ repositories {
 dependencies {
     testImplementation("org.assertj:assertj-core:$assertjVersion")
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
+    testImplementation ("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-                   ("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
