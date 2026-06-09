@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class StringSchemaTest {
+class ValidatorTest {
     private Validator v;
     private StringSchema schema;
 
