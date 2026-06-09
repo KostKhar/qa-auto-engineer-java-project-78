@@ -1,15 +1,10 @@
 package hexlet.code.schemas;
 
-public class NumberSchema {
-    private boolean required = false;
-    private Boolean positive = null;  // null - проверка не задана
+public class NumberSchema extends BaseSchema <NumberSchema> {
+    private Boolean positive = null;
     private Integer min = null;
     private Integer max = null;
 
-    public NumberSchema required() {
-        this.required = true;
-        return this;
-    }
 
     public NumberSchema positive() {
         this.positive = true;
@@ -23,7 +18,7 @@ public class NumberSchema {
     }
 
     public boolean isValid(Integer value) {
-        if (required && value == null) {
+        if (requiredBool && value == null) {
             return false;
         }
 
@@ -39,10 +34,6 @@ public class NumberSchema {
             return false;
         }
 
-        if (max != null && value > max) {
-            return false;
-        }
-
-        return true;
+        return max == null || value <= max;
     }
 }
