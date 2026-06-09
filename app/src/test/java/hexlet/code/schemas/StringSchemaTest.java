@@ -20,7 +20,7 @@ class StringSchemaTest {
     }
 
     @Test
-    void checkReqiuiredEmptyWithoutRequired_returnTrue(){
+    void checkValidEmptyWithoutRequired_returnTrue(){
         assertTrue(schema.isValid(""), "isValid value = string.isEmpty() false");
     }
 
