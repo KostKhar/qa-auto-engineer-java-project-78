@@ -20,22 +20,32 @@ public class MapSchema extends BaseSchema<MapSchema> {
 
     public <T> boolean isValid(Map<String, T> value) {
         if (value == null) {
-            return !requiredBool;
+            return !isRequired();
         }
 
-        if (size != null && value.size() != size) {
+        if (!isSizeValid(value)) {
             return false;
         }
 
-        if (shapedSchemas != null) {
-            for (Map.Entry<String, BaseSchema<?>> entry : shapedSchemas.entrySet()) {
-                String key = entry.getKey();
-                BaseSchema<?> schema = entry.getValue();
-                Object fieldValue = value.get(key);
+        return isShapeValid(value);
+    }
 
-                if (!isFieldValid(schema, fieldValue)) {
-                    return false;
-                }
+    private boolean isSizeValid(Map<String, ?> value) {
+        return size == null || value.size() == size;
+    }
+
+    private <T> boolean isShapeValid(Map<String, T> value) {
+        if (shapedSchemas == null) {
+            return true;
+        }
+
+        for (Map.Entry<String, BaseSchema<?>> entry : shapedSchemas.entrySet()) {
+            String key = entry.getKey();
+            BaseSchema<?> schema = entry.getValue();
+            Object fieldValue = value.get(key);
+
+            if (!isFieldValid(schema, fieldValue)) {
+                return false;
             }
         }
 
@@ -44,29 +54,41 @@ public class MapSchema extends BaseSchema<MapSchema> {
 
     private boolean isFieldValid(BaseSchema<?> schema, Object fieldValue) {
         if (schema instanceof StringSchema stringSchema) {
-            if (fieldValue != null && !(fieldValue instanceof String)) {
-                return false;
-            }
-            return stringSchema.isValid((String) fieldValue);
+            return validateStringField(stringSchema, fieldValue);
         }
 
         if (schema instanceof NumberSchema numberSchema) {
-            if (fieldValue != null && !(fieldValue instanceof Integer)) {
-                return false;
-            }
-            return numberSchema.isValid((Integer) fieldValue);
+            return validateNumberField(numberSchema, fieldValue);
         }
 
         if (schema instanceof MapSchema mapSchema) {
-            if (fieldValue != null && !(fieldValue instanceof Map)) {
-                return false;
-            }
-            @SuppressWarnings("unchecked")
-            Map<String, Object> mapValue = (Map<String, Object>) fieldValue;
-            return mapSchema.isValid(mapValue);
+            return validateMapField(mapSchema, fieldValue);
         }
 
         return true;
+    }
+
+    private boolean validateStringField(StringSchema schema, Object fieldValue) {
+        if (fieldValue != null && !(fieldValue instanceof String)) {
+            return false;
+        }
+        return schema.isValid((String) fieldValue);
+    }
+
+    private boolean validateNumberField(NumberSchema schema, Object fieldValue) {
+        if (fieldValue != null && !(fieldValue instanceof Integer)) {
+            return false;
+        }
+        return schema.isValid((Integer) fieldValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean validateMapField(MapSchema schema, Object fieldValue) {
+        if (fieldValue != null && !(fieldValue instanceof Map)) {
+            return false;
+        }
+        Map<String, Object> mapValue = (Map<String, Object>) fieldValue;
+        return schema.isValid(mapValue);
     }
 
 }
