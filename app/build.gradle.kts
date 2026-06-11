@@ -55,7 +55,7 @@ tasks.jacocoTestReport {
 }
 
 
-sonar {
+sonarqube {
   properties {
     property("sonar.projectKey", "KostKhar_qa-auto-engineer-java-project-78")
     property("sonar.organization", "kostkhar")
