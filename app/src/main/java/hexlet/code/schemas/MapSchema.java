@@ -25,7 +25,7 @@ public class MapSchema extends BaseSchema<Map<String, Object>> {
 
     public <T> boolean isValid(Map<String, T> value) {
         if (value == null) {
-            return isRequired();
+            return !isRequired();
         }
 
         if (!isSizeValid(value)) {

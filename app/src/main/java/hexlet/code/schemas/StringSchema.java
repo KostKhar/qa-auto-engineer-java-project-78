@@ -22,7 +22,7 @@ public class StringSchema extends BaseSchema<String> {
 
     public boolean isValid(String value) {
         if (isEmptyValue(value)) {
-            return isRequired();
+            return !isRequired();
         }
 
         if (!isMinLengthValid(value)) {
