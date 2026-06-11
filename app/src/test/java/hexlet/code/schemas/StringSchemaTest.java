@@ -6,12 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StringSchemaTest {
+
     private Validator v;
     private StringSchema schema;
-
 
     @BeforeEach
     void setUp() {
@@ -20,84 +21,102 @@ class StringSchemaTest {
     }
 
     @Test
-    void checkValidEmptyWithoutRequired_returnTrue(){
-        assertTrue(schema.isValid(""), "isValid value = string.isEmpty() false");
+    void checkValidEmptyWithoutRequired_returnTrue() {
+        assertTrue(schema.isValid(""), "empty string should be valid when not required");
     }
 
     @Test
-    void checkValidNullWithoutRequired_returnTrue(){
-        assertTrue(schema.isValid(null), "isValid value=null false");
+    void checkValidNullWithoutRequired_returnTrue() {
+        assertTrue(schema.isValid(null), "null should be valid when not required");
     }
 
-
     @Test
-    void checkRequiredWithIsValid_returnFalse(){
+    void checkRequiredWithNull_returnFalse() {
         schema.required();
-        assertFalse(schema.isValid(null), "isValid value=null true after required");
+        assertFalse(schema.isValid(null), "null should be invalid when required");
     }
 
     @Test
-    void checkReqiuiredEmptyWithoutRequired_returnFalse(){
+    void checkRequiredEmpty_returnFalse() {
         schema.required();
-        assertFalse(schema.isValid(""), "isValid value = string.isEmpty() false");
+        assertFalse(schema.isValid(""), "empty string should be invalid when required");
     }
 
     @Test
-    void checkRequiredWithString_returnTrue(){
+    void checkRequiredWithSpaces_returnTrue() {
         schema.required();
-        assertTrue(schema.isValid("what does the fox say"));
+        assertTrue(schema.isValid(" "), "whitespace-only string should be valid when required");
     }
 
     @Test
-    void checkReqiuiredWithOneWord_returnTrue(){
+    void checkRequiredWithString_returnTrue() {
         schema.required();
-        assertTrue(schema.isValid("hexlet"));
+        assertTrue(schema.isValid("what does the fox say"), "non-empty string should be valid when required");
+    }
+
+    @Test
+    void checkRequiredWithOneWord_returnTrue() {
+        schema.required();
+        assertTrue(schema.isValid("hexlet"), "non-empty string should be valid when required");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"wh", "what"})
-    void checkContainsSubstringInString_returnTrue(String value){
+    void checkContainsSubstringInString_returnTrue(String substring) {
         schema.required();
-        assertTrue(schema.contains(value).isValid("what does the fox say"));
-    }
-
-
-    @Test
-    void checkNotContainsSubstring_returnFalse(){
-        schema.required();
-        assertFalse(schema.contains("whatthe").isValid("what does the fox say"));
+        assertTrue(schema.contains(substring).isValid("what does the fox say"),
+                "string should contain substring '" + substring + "'");
     }
 
     @Test
-    void checkContainsNullInString_returnTrue(){
+    void checkNotContainsSubstring_returnFalse() {
         schema.required();
-        assertTrue(schema.contains(null).isValid("what does the fox say"));
+        assertFalse(schema.contains("whatthe").isValid("what does the fox say"),
+                "string should not contain missing substring");
     }
 
     @Test
-    void checkMinLengthinString_returnTrue(){
+    void checkContainsNullInString_returnTrue() {
         schema.required();
-        assertTrue(schema.minLength(4).isValid("what"));
+        assertTrue(schema.contains(null).isValid("what does the fox say"),
+                "contains(null) should skip substring check");
     }
 
     @Test
-    void checkMinLengthNotInString_returnTrue(){
+    void checkContainsEmptySubstring_returnTrue() {
         schema.required();
-        assertFalse(schema.minLength(6).isValid("what"));
+        assertTrue(schema.contains("").isValid("what does the fox say"),
+                "empty substring should match any string");
     }
 
     @Test
-    void checkMinLengthNull_returnTrue(){
+    void checkMinLengthBoundary_returnTrue() {
         schema.required();
-        assertTrue(schema.minLength(null).isValid("what"));
+        assertTrue(schema.minLength(4).isValid("what"), "string with exact min length should pass");
     }
 
     @Test
-    void checkReqiuiredWithOneWord_returnFalse(){
+    void checkMinLengthNotInString_returnFalse() {
         schema.required();
-        schema.contains("whatthe");
-        assertFalse(schema.isValid("what does the fox say"));
+        assertFalse(schema.minLength(6).isValid("what"), "string shorter than minLength should fail");
     }
 
+    @Test
+    void checkMinLengthNull_returnTrue() {
+        schema.required();
+        assertTrue(schema.minLength(null).isValid("what"), "minLength(null) should skip length check");
+    }
+
+    @Test
+    void checkRequiredContainsChain_returnFalse() {
+        assertFalse(schema.required().contains("whatthe").isValid("what does the fox say"),
+                "string without required substring should fail");
+    }
+
+    @Test
+    void checkRequiredMinLengthContainsChain_returnTrue() {
+        assertTrue(schema.required().minLength(3).contains("fox").isValid("what does the fox say"),
+                "string matching all chained constraints should pass");
+    }
 
 }
