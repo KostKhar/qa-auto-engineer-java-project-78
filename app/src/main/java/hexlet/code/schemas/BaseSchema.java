@@ -7,10 +7,8 @@ public class BaseSchema<T> {
         return requiredBool;
     }
 
-    @SuppressWarnings("unchecked")
-    public T required() {
+    protected void setRequired() {
         requiredBool = true;
-        return (T) this;
     }
 
 }

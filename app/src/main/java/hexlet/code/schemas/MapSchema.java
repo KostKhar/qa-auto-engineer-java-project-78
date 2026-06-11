@@ -2,10 +2,15 @@ package hexlet.code.schemas;
 
 import java.util.Map;
 
-public class MapSchema extends BaseSchema<MapSchema> {
+public class MapSchema extends BaseSchema<Map<String, Object>> {
 
     private Integer size = null;
-    private Map<String, BaseSchema<?>> shapedSchemas = null;
+    private Map<String, ? extends BaseSchema<?>> shapedSchemas = null;
+
+    public MapSchema required() {
+        setRequired();
+        return this;
+    }
 
     // добавляет ограничение на размер мапы. Количество пар ключ-значений в объекте Map должно быть равно заданному
     public MapSchema sizeof(Integer sizeOfMap) {
@@ -13,14 +18,14 @@ public class MapSchema extends BaseSchema<MapSchema> {
         return this;
     }
 
-    public MapSchema shape(Map<String, BaseSchema<?>> schemas) {
+    public MapSchema shape(Map<String, ? extends BaseSchema<?>> schemas) {
         this.shapedSchemas = schemas;
         return this;
     }
 
     public <T> boolean isValid(Map<String, T> value) {
         if (value == null) {
-            return !isRequired();
+            return isRequired();
         }
 
         if (!isSizeValid(value)) {
@@ -39,7 +44,7 @@ public class MapSchema extends BaseSchema<MapSchema> {
             return true;
         }
 
-        for (Map.Entry<String, BaseSchema<?>> entry : shapedSchemas.entrySet()) {
+        for (Map.Entry<String, ? extends BaseSchema<?>> entry : shapedSchemas.entrySet()) {
             String key = entry.getKey();
             BaseSchema<?> schema = entry.getValue();
             Object fieldValue = value.get(key);
