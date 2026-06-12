@@ -2,7 +2,12 @@ plugins {
     id("java")
     checkstyle
     jacoco
-     id ("org.sonarqube") version ("7.3.0.8198")
+    id("org.sonarqube") version "7.3.1.8318"
+    application
+}
+
+application {
+    mainClass.set("hexlet.code.App")
 }
 
 group = "hexlet.code"
@@ -50,10 +55,9 @@ tasks.jacocoTestReport {
 }
 
 
-sonar {
+sonarqube {
   properties {
-    property("sonar.projectKey", "cicdpiplinetohell_qa-auto-engineer-java-project-71")
-    property("sonar.organization", "cicdpiplinetohell")
-    property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
+    property("sonar.projectKey", "KostKhar_qa-auto-engineer-java-project-78")
+    property("sonar.organization", "kostkhar")
   }
 }

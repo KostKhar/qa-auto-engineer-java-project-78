@@ -1,10 +1,14 @@
 package hexlet.code.schemas;
 
-public class NumberSchema extends BaseSchema <NumberSchema> {
+public class NumberSchema extends BaseSchema<Integer> {
     private Boolean positive = null;
     private Integer min = null;
     private Integer max = null;
 
+    public NumberSchema required() {
+        setRequired();
+        return this;
+    }
 
     public NumberSchema positive() {
         this.positive = true;
@@ -18,18 +22,22 @@ public class NumberSchema extends BaseSchema <NumberSchema> {
     }
 
     public boolean isValid(Integer value) {
-        if (requiredBool && value == null) {
-            return false;
-        }
-
         if (value == null) {
-            return true;
+            return !isRequired();
         }
 
-        if (positive != null && positive && value <= 0) {
+        if (!isPositiveValid(value)) {
             return false;
         }
 
+        return isRangeValid(value);
+    }
+
+    private boolean isPositiveValid(Integer value) {
+        return positive == null || !positive || value > 0;
+    }
+
+    private boolean isRangeValid(Integer value) {
         if (min != null && value < min) {
             return false;
         }

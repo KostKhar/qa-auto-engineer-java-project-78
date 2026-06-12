@@ -1,12 +1,14 @@
 package hexlet.code.schemas;
 
-public class BaseSchema <T> {
-    protected boolean requiredBool = false;
+public class BaseSchema<T> {
+    private boolean requiredBool = false;
 
-    @SuppressWarnings("unchecked")
-    public T required() {
+    protected boolean isRequired() {
+        return requiredBool;
+    }
+
+    protected void setRequired() {
         requiredBool = true;
-        return (T) this;
     }
 
 }

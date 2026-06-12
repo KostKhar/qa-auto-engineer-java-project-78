@@ -9,4 +9,6 @@
     <suppress files=".*[\\/]test[\\/].*" checks="AvoidStarImport"/>
     <!-- Protected fields in abstract base test classes are intentional for subclass access -->
     <suppress files=".*[\\/]test[\\/].*" checks="VisibilityModifier"/>
+    <!-- Test data naturally uses literal values -->
+    <suppress files=".*[\\/]test[\\/].*" checks="MagicNumber"/>
 </suppressions>
